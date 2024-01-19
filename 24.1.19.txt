@@ -1,0 +1,65 @@
+git 환경
+
+git 은 DevOps pipline(작업처리가 매우 빠르다.) 에서 매우 중요하다.
++ provision 형상 관리자
+
+
+
+기존 실습중인 ubuntu 환경에 gitlab 설치시 너무 많은 RAM 을 사용하게 되어 매우 무겁습니다.
+
+root@ebes:~# systemctl stop elasticsearch
+root@ebes:~# systemctl stop kibana
+root@ebes:~# systemctl stop filebeat
+root@ebes:~# systemctl stop metricbeat
+
+이후에 모두다 disable 도 해주세요!
+ 
+
+git 사용을 위해 git 을 다운로드 해 주세요
+
+https://github.com/git-for-windows/git/releases/download/v2.43.0.windows.1/Git-2.43.0-64-bit.exe
+
+[기본 git]
+[.git 내부 구조]
+/objects : git 에서 활용하는 데이터들이 저장되는 곳. 실제 파일에 담긴 값들을 SHA1 해시한 값 40자중 2자는  폴더명 38자는 파일명으로 두어 식별자로 활용한다. 해싱을 사용할 때, 소스코드의 일부분만을 바꾸더라도 별개의 해시값이 되기 때문에, 파일 식별이 쉬워지게 된다. SHA1 해시 처리전, zlib 으로 한번의 압축이 지행된다. 
+
+/refs : git 에서 관리하는 branch 들의 정보가 들어있다. 로컬에서 작업하는 부분은 heads, 원격저장소는 remotes 안에 관리된다. 각 브랜치별 마지막 커밋의 해시값을 저장하고 있다.
+
+/logs  : HEAD, 각각의 브랜치 별로 작업 목록이 로그로 기록된다. 
+
+/hooks : git 에서 지원하는 기본적인 hook 들이 정의되어 있다. 
+
+HEAD : 현재 로컬 저장소가 가르키고 있는 브랜치를 참조한다. 특정 브랜치가 아닌 특정 커밋으로  checkout 하면 detach 가 된다. 이때는 브랜치를 참조하는 것이 아니라, 커밋의 해시값이 HEAD 에 들어가게 된다.
+
+- git : 버전 관리 시스템
+- github : git 으로 관리하는 프로젝트를 올려둘 수 있는 사이트
+- git bash : CLI 방식으로 git 을 사용할 수 있는 환경
+- commit : 버전 관리를 통해 생성된 파일, 혹은 그 행위
+- checkout : 원하는 지점으로 파일을 되돌릴 수 있다
+- 로컬 저장소 : git 으로 버전 관리하는 내 컴퓨터 안의 폴더
+- 원격 저장소 : github 에서 협업하는 공간
+- 레포지토리 : 원격저장소를 의미
+- push : 로컬 저장소의 커밋(버전관리한 파일)을 원격 저장소에 올리는 것
+- pull : 원격저장소의 커밋을 로컬저장소에 내려 받는것
+
+
+##### gitlab 사용해 보기 #########################
+미리 nginx 설치/실행해 둔다
+[gitlab-ce 설치]
+apt-get install -y curl openssh-server ca-certificates && 
+curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | bash && sudo apt-get -y install gitlab-ce
+
+[접속정보 수정하기]
+vi /etc/gitlab/gitlab.rb
+external_url 'http://211.183.3.10:8888'
+
+[서비스 재구성(새로시작)/상태확인/중지/삭제/재시작]
+gitlab-ctl reconfigure
+gitlab-ctl status
+gitlab-ctl stop
+gitlab-ctl uninstall
+gitlab-ctl restart
+
+
+[초기패스워드 확인]
+cat /etc/gitlab/initial_root_password
